@@ -1419,235 +1419,276 @@ json3: [
 })();
     </script>
   <script>
-  // Tamamen bağımsız dil değiştirme özelliği
+  // Dil değiştirme eklentisi - Tamamen bağımsız script
 (function() {
     'use strict';
     
-    // Konfigürasyon
-    const config = {
-        isGermanToTurkish: true, // true: Almanca->Türkçe, false: Türkçe->Almanca
-        buttonId: 'language-switch-btn',
-        styles: {
-            button: {
-                background: 'linear-gradient(90deg, #e67e22, #d35400)',
-                color: 'white',
-                border: 'none',
-                padding: '12px 25px',
-                fontSize: '1rem',
-                borderRadius: '50px',
-                cursor: 'pointer',
-                margin: '10px',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-            },
-            buttonHover: {
-                transform: 'translateY(-3px)',
-                boxShadow: '0 8px 20px rgba(0, 0, 0, 0.2)'
-            },
-            buttonActive: {
-                transform: 'translateY(1px)'
+    // Stil ekleme
+    const style = document.createElement('style');
+    style.textContent = `
+        .language-switcher-container {
+            margin: 20px auto;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .language-switcher-title {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .language-switch-button {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 180px;
+            justify-content: center;
+        }
+        
+        .language-switch-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .language-switch-button:active {
+            transform: translateY(1px);
+        }
+        
+        .language-switch-button.active {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .language-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            margin-left: 5px;
+            animation: pulse 2s infinite;
+        }
+        
+        .language-switch-button.active .language-indicator {
+            background-color: #fff;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .language-mode-info {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            color: white;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+        }
+        
+        @media (max-width: 600px) {
+            .language-switch-button {
+                display: block;
+                margin: 8px auto;
+                width: 80%;
+                max-width: 250px;
             }
         }
-    };
+    `;
+    document.head.appendChild(style);
     
     // Global değişkenler
-    let originalWords = null;
-    let switchButton = null;
-    let isInitialized = false;
-    
-    // Orijinal fonksiyonları saklamak için
+    let isGermanToTurkish = true; // Varsayılan: Almanca soru, Türkçe cevap
     let originalShowNextQuestion = null;
     let originalCreateOptions = null;
     let originalCheckAnswer = null;
     
-    // Stil ekleme fonksiyonu
-    function addStyles() {
-        const styleId = 'language-switch-styles';
-        if (document.getElementById(styleId)) return;
+    // Dil değiştirme butonunu oluşturma
+    function createLanguageSwitcher() {
+        const container = document.createElement('div');
+        container.className = 'language-switcher-container';
+        container.id = 'language-switcher-container';
         
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
-            .language-switch-btn {
-                background: linear-gradient(90deg, #e67e22, #d35400);
-                color: white;
-                border: none;
-                padding: 12px 25px;
-                font-size: 1rem;
-                border-radius: 50px;
-                cursor: pointer;
-                margin: 10px;
-                transition: all 0.3s ease;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-                font-weight: bold;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            }
-            
-            .language-switch-btn:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            }
-            
-            .language-switch-btn:active {
-                transform: translateY(1px);
-            }
-            
-            .language-switch-btn.turkish-mode {
-                background: linear-gradient(90deg, #c0392b, #e74c3c);
-            }
-            
-            .language-indicator {
-                display: inline-block;
-                background: rgba(255, 255, 255, 0.2);
-                padding: 2px 8px;
-                border-radius: 12px;
-                font-size: 0.85rem;
-                margin-left: 5px;
-            }
-        `;
-        document.head.appendChild(style);
+        const title = document.createElement('div');
+        title.className = 'language-switcher-title';
+        title.innerHTML = '<i class="fas fa-exchange-alt"></i> Soru Dili';
+        
+        const germanToTurkishBtn = document.createElement('button');
+        germanToTurkishBtn.className = 'language-switch-button active';
+        germanToTurkishBtn.id = 'german-to-turkish-btn';
+        germanToTurkishBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Almanca → Türkçe <span class="language-indicator"></span>';
+        
+        const turkishToGermanBtn = document.createElement('button');
+        turkishToGermanBtn.className = 'language-switch-button';
+        turkishToGermanBtn.id = 'turkish-to-german-btn';
+        turkishToGermanBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Türkçe → Almanca <span class="language-indicator"></span>';
+        
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'language-mode-info';
+        infoDiv.id = 'language-mode-info';
+        infoDiv.innerHTML = '<i class="fas fa-info-circle"></i> Almanca kelime verilecek, Türkçe anlamını bulacaksınız.';
+        
+        container.appendChild(title);
+        container.appendChild(germanToTurkishBtn);
+        container.appendChild(turkishToGermanBtn);
+        container.appendChild(infoDiv);
+        
+        return container;
     }
     
-    // Butonu oluştur
-    function createSwitchButton() {
-        const button = document.createElement('button');
-        button.id = config.buttonId;
-        button.className = 'language-switch-btn';
-        updateButtonText();
+    // Buton durumlarını güncelleme
+    function updateButtonStates() {
+        const germanBtn = document.getElementById('german-to-turkish-btn');
+        const turkishBtn = document.getElementById('turkish-to-german-btn');
+        const infoDiv = document.getElementById('language-mode-info');
         
-        button.addEventListener('click', toggleLanguageMode);
-        
-        // Hover efektleri
-        button.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-3px)';
-            this.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
-        });
-        
-        button.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
-        });
-        
-        return button;
-    }
-    
-    // Buton metnini güncelle
-    function updateButtonText() {
-        if (!switchButton) return;
-        
-        if (config.isGermanToTurkish) {
-            switchButton.innerHTML = `
-                <i class="fas fa-exchange-alt"></i>
-                DE → TR
-                <span class="language-indicator">Almanca Sor</span>
-            `;
-            switchButton.classList.remove('turkish-mode');
+        if (isGermanToTurkish) {
+            germanBtn.classList.add('active');
+            turkishBtn.classList.remove('active');
+            infoDiv.innerHTML = '<i class="fas fa-info-circle"></i> Almanca kelime verilecek, Türkçe anlamını bulacaksınız.';
         } else {
-            switchButton.innerHTML = `
-                <i class="fas fa-exchange-alt"></i>
-                TR → DE
-                <span class="language-indicator">Türkçe Sor</span>
-            `;
-            switchButton.classList.add('turkish-mode');
+            germanBtn.classList.remove('active');
+            turkishBtn.classList.add('active');
+            infoDiv.innerHTML = '<i class="fas fa-info-circle"></i> Türkçe kelime verilecek, Almanca anlamını bulacaksınız.';
         }
     }
     
-    // Dil modunu değiştir
-    function toggleLanguageMode() {
-        config.isGermanToTurkish = !config.isGermanToTurkish;
-        updateButtonText();
+    // Orijinal fonksiyonları yedekleme ve değiştirme
+    function interceptOriginalFunctions() {
+        // showNextQuestion fonksiyonunu değiştir
+        if (typeof window.showNextQuestion === 'function') {
+            originalShowNextQuestion = window.showNextQuestion;
+        }
         
-        // Eğer quiz devam ediyorsa ve bir soru gösteriliyorsa, yeni moda göre güncelle
-        if (typeof currentWord !== 'undefined' && currentWord && 
-            document.getElementById('quiz-screen') && 
-            document.getElementById('quiz-screen').classList.contains('active')) {
+        window.showNextQuestion = function() {
+            // Orijinal mantığı çalıştır ama soruyu değiştir
+            if (originalShowNextQuestion) {
+                originalShowNextQuestion();
+            } else {
+                // Orijinal koddan kopyalanan mantık
+                if (typeof askedWords !== 'undefined' && typeof words !== 'undefined') {
+                    if (askedWords.length >= words.length) {
+                        if (typeof endQuiz === 'function') endQuiz();
+                        return;
+                    }
+                    
+                    let availableWords = words.filter(word => !askedWords.includes(word));
+                    window.currentWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+                    askedWords.push(window.currentWord);
+                    
+                    const progress = (askedWords.length / words.length) * 100;
+                    const progressBar = document.getElementById('progress-bar');
+                    if (progressBar) progressBar.style.width = `${progress}%`;
+                    
+                    const exampleContainer = document.getElementById('example-container');
+                    if (exampleContainer) exampleContainer.style.display = 'none';
+                    
+                    const nextBtn = document.getElementById('next-btn');
+                    if (nextBtn) nextBtn.disabled = true;
+                    
+                    const scoreEl = document.getElementById('score');
+                    const totalEl = document.getElementById('total');
+                    if (scoreEl && totalEl) {
+                        scoreEl.textContent = typeof score !== 'undefined' ? score : 0;
+                        totalEl.textContent = words.length;
+                    }
+                }
+            }
             
-            // Mevcut soruyu yeni modda göster
-            refreshCurrentQuestion();
-        }
-        
-        // Butona tıklama animasyonu
-        switchButton.style.transform = 'translateY(1px)';
-        setTimeout(() => {
-            switchButton.style.transform = 'translateY(0)';
-        }, 100);
-        
-        console.log(`Dil modu değiştirildi: ${config.isGermanToTurkish ? 'Almanca → Türkçe' : 'Türkçe → Almanca'}`);
+            // Soruyu dil moduna göre güncelle
+            updateQuestionDisplay();
+            
+            // Şıkları oluştur
+            if (typeof createModifiedOptions === 'function') {
+                createModifiedOptions();
+            }
+        };
     }
     
-    // Mevcut soruyu yenile
-    function refreshCurrentQuestion() {
-        if (typeof currentWord === 'undefined' || !currentWord) return;
-        
+    // Soru görünümünü güncelleme
+    function updateQuestionDisplay() {
         const questionEl = document.getElementById('question');
-        const optionsEl = document.getElementById('options');
+        if (!questionEl || !window.currentWord) return;
         
-        if (!questionEl || !optionsEl) return;
-        
-        // Soruyu güncelle
-        if (config.isGermanToTurkish) {
-            questionEl.innerHTML = `"${currentWord.german}" kelimesinin Türkçe anlamı nedir?<br>
-                <span class="word-type">${currentWord.type}</span>`;
+        if (isGermanToTurkish) {
+            questionEl.innerHTML = `"${window.currentWord.german}" kelimesinin Türkçe anlamı nedir?<br>
+                <span class="word-type">${window.currentWord.type}</span>`;
         } else {
-            questionEl.innerHTML = `"${currentWord.turkish}" kelimesinin Almanca karşılığı nedir?<br>
-                <span class="word-type">${currentWord.type}</span>`;
-        }
-        
-        // Şıkları yeniden oluştur
-        createNewOptions();
-        
-        // Örnek cümleyi gizle
-        const exampleContainer = document.getElementById('example-container');
-        if (exampleContainer) {
-            exampleContainer.style.display = 'none';
-        }
-        
-        // Sonraki butonunu devre dışı bırak
-        const nextBtn = document.getElementById('next-btn');
-        if (nextBtn) {
-            nextBtn.disabled = true;
+            questionEl.innerHTML = `"${window.currentWord.turkish}" kelimesinin Almanca karşılığı nedir?<br>
+                <span class="word-type">${window.currentWord.type}</span>`;
         }
     }
     
-    // Yeni şıkları oluştur
-    function createNewOptions() {
+    // Değiştirilmiş şık oluşturma fonksiyonu
+    function createModifiedOptions() {
         const optionsEl = document.getElementById('options');
-        if (!optionsEl) return;
+        if (!optionsEl || !window.currentWord) return;
         
-        // Doğru cevabı belirle
-        const correctAnswer = config.isGermanToTurkish ? currentWord.turkish : currentWord.german;
+        let correctAnswer, wrongAnswers = [];
         
-        // Yanlış cevapları al
-        let wrongAnswers = [];
-        if (typeof allWords !== 'undefined' && allWords.length > 0) {
-            let availableWords = allWords.filter(word => {
-                const wordAnswer = config.isGermanToTurkish ? word.turkish : word.german;
-                return wordAnswer !== correctAnswer && !wrongAnswers.includes(wordAnswer);
-            });
-            
-            // Rastgele 3 yanlış cevap seç
-            while (wrongAnswers.length < 3 && availableWords.length > 0) {
-                const randomIndex = Math.floor(Math.random() * availableWords.length);
-                const wordAnswer = config.isGermanToTurkish ? 
-                    availableWords[randomIndex].turkish : 
-                    availableWords[randomIndex].german;
+        if (isGermanToTurkish) {
+            correctAnswer = window.currentWord.turkish;
+            // Türkçe yanlış cevaplar
+            if (typeof allWords !== 'undefined') {
+                let availableWords = allWords.filter(word => 
+                    word.turkish !== correctAnswer && !wrongAnswers.includes(word.turkish)
+                );
                 
-                if (!wrongAnswers.includes(wordAnswer)) {
-                    wrongAnswers.push(wordAnswer);
-                    availableWords.splice(randomIndex, 1);
+                while (wrongAnswers.length < 3 && availableWords.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * availableWords.length);
+                    const wrongAnswer = availableWords[randomIndex].turkish;
+                    
+                    if (!wrongAnswers.includes(wrongAnswer)) {
+                        wrongAnswers.push(wrongAnswer);
+                        availableWords.splice(randomIndex, 1);
+                    }
+                }
+            }
+        } else {
+            correctAnswer = window.currentWord.german;
+            // Almanca yanlış cevaplar
+            if (typeof allWords !== 'undefined') {
+                let availableWords = allWords.filter(word => 
+                    word.german !== correctAnswer && !wrongAnswers.includes(word.german)
+                );
+                
+                while (wrongAnswers.length < 3 && availableWords.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * availableWords.length);
+                    const wrongAnswer = availableWords[randomIndex].german;
+                    
+                    if (!wrongAnswers.includes(wrongAnswer)) {
+                        wrongAnswers.push(wrongAnswer);
+                        availableWords.splice(randomIndex, 1);
+                    }
                 }
             }
         }
         
-        // Tüm şıkları birleştir ve karıştır
+        // Şıkları karıştır
         let allOptions = [correctAnswer, ...wrongAnswers];
         shuffleArray(allOptions);
         
@@ -1659,14 +1700,14 @@ json3: [
             optionEl.setAttribute('data-value', option);
             optionEl.textContent = option;
             
-            optionEl.addEventListener('click', () => checkNewAnswer(option));
+            optionEl.addEventListener('click', () => checkModifiedAnswer(option));
             optionsEl.appendChild(optionEl);
         });
     }
     
-    // Yeni cevap kontrol fonksiyonu
-    function checkNewAnswer(selectedAnswer) {
-        const correctAnswer = config.isGermanToTurkish ? currentWord.turkish : currentWord.german;
+    // Değiştirilmiş cevap kontrolü
+    function checkModifiedAnswer(selectedAnswer) {
+        const correctAnswer = isGermanToTurkish ? window.currentWord.turkish : window.currentWord.german;
         const options = document.querySelectorAll('.option');
         
         // Tüm şıkları devre dışı bırak
@@ -1685,52 +1726,24 @@ json3: [
         // Cevap doğruysa skoru artır
         if (selectedAnswer === correctAnswer) {
             if (typeof score !== 'undefined') {
-                window.score++;
+                window.score = score + 1;
             }
-            
-            // Örnek cümleyi göster
-            showExampleSentence();
-        } else {
-            // Yanlış cevap için de örnek cümleyi göster
-            showExampleSentence();
+        }
+        
+        // Örnek cümleyi göster
+        const exampleText = document.getElementById('example-text');
+        const exampleContainer = document.getElementById('example-container');
+        if (exampleText && exampleContainer && window.currentWord.example_sentence) {
+            exampleText.textContent = window.currentWord.example_sentence;
+            exampleContainer.style.display = 'block';
         }
         
         // Sonraki butonunu aktif et
         const nextBtn = document.getElementById('next-btn');
-        if (nextBtn) {
-            nextBtn.disabled = false;
-        }
-        
-        // Skoru güncelle
-        updateScoreDisplay();
+        if (nextBtn) nextBtn.disabled = false;
     }
     
-    // Örnek cümleyi göster
-    function showExampleSentence() {
-        const exampleContainer = document.getElementById('example-container');
-        const exampleText = document.getElementById('example-text');
-        
-        if (exampleContainer && exampleText && currentWord && currentWord.example_sentence) {
-            exampleText.textContent = currentWord.example_sentence;
-            exampleContainer.style.display = 'block';
-        }
-    }
-    
-    // Skoru güncelle
-    function updateScoreDisplay() {
-        const scoreEl = document.getElementById('score');
-        const totalEl = document.getElementById('total');
-        
-        if (scoreEl && typeof score !== 'undefined') {
-            scoreEl.textContent = score;
-        }
-        
-        if (totalEl && typeof words !== 'undefined') {
-            totalEl.textContent = words.length;
-        }
-    }
-    
-    // Dizi karıştırma fonksiyonu
+    // Yardımcı fonksiyon: Dizi karıştırma
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -1738,113 +1751,149 @@ json3: [
         }
     }
     
-    // Butonu sayfaya ekle
-    function addButtonToPage() {
-        const quizControls = document.querySelector('.quiz-controls');
-        if (quizControls && !document.getElementById(config.buttonId)) {
-            switchButton = createSwitchButton();
-            quizControls.insertBefore(switchButton, quizControls.firstChild);
-            return true;
-        }
-        return false;
-    }
-    
-    // Orijinal showNextQuestion fonksiyonunu yakala ve genişlet
-    function extendShowNextQuestion() {
-        if (typeof window.showNextQuestion === 'function') {
-            originalShowNextQuestion = window.showNextQuestion;
+    // Buton event listener'larını kurma
+    function setupEventListeners() {
+        const germanBtn = document.getElementById('german-to-turkish-btn');
+        const turkishBtn = document.getElementById('turkish-to-german-btn');
+        
+        if (germanBtn) {
+            germanBtn.addEventListener('click', () => {
+                isGermanToTurkish = true;
+                updateButtonStates();
+            });
         }
         
-        // showNextQuestion fonksiyonunu global scope'ta ara
-        if (typeof showNextQuestion !== 'undefined') {
-            // Orijinal fonksiyonu sakla ve yenisiyle değiştir
-            const originalFunc = showNextQuestion;
-            
-            window.showNextQuestion = function() {
-                // Orijinal fonksiyonu çalıştır
-                originalFunc.call(this);
-                
-                // Dil moduna göre soruyu güncelle
-                setTimeout(() => {
-                    if (!config.isGermanToTurkish && typeof currentWord !== 'undefined' && currentWord) {
-                        refreshCurrentQuestion();
-                    }
-                }, 10);
-            };
+        if (turkishBtn) {
+            turkishBtn.addEventListener('click', () => {
+                isGermanToTurkish = false;
+                updateButtonStates();
+            });
         }
     }
     
-    // Sayfa yüklenme durumunu kontrol et
-    function waitForPageReady() {
-        const checkReady = () => {
-            // Gerekli elementlerin varlığını kontrol et
-            const quizControls = document.querySelector('.quiz-controls');
-            const questionEl = document.getElementById('question');
+    // Quiz başlatma butonunu dinleme ve kontrol etme
+    function interceptStartButton() {
+        const startBtn = document.getElementById('start-btn');
+        if (!startBtn) return;
+        
+        // Orijinal click event'ini klonla
+        const originalStartHandler = startBtn.onclick;
+        
+        // Yeni click handler
+        startBtn.onclick = function(e) {
+            // Önce fonksiyonları değiştir
+            interceptOriginalFunctions();
             
-            if (quizControls && questionEl) {
-                initialize();
-                return true;
+            // Sonra orijinal handler'ı çalıştır
+            if (originalStartHandler) {
+                originalStartHandler.call(this, e);
             }
-            return false;
         };
         
-        if (checkReady()) return;
+        // Eğer addEventListener ile bağlanmışsa
+        const newStartBtn = startBtn.cloneNode(true);
+        startBtn.parentNode.replaceChild(newStartBtn, startBtn);
         
-        // 100ms aralıklarla kontrol et
-        const interval = setInterval(() => {
-            if (checkReady()) {
-                clearInterval(interval);
+        newStartBtn.addEventListener('click', function(e) {
+            // Önce fonksiyonları değiştir
+            interceptOriginalFunctions();
+            
+            // Orijinal start fonksiyonunu çağır
+            if (typeof currentPage !== 'undefined' && !currentPage) {
+                alert('Lütfen bir sayfa seçin veya rastgele seçim yapın!');
+                return;
             }
-        }, 100);
-        
-        // 10 saniye sonra durdur
-        setTimeout(() => {
-            clearInterval(interval);
-        }, 10000);
+            
+            newStartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yükleniyor...';
+            newStartBtn.disabled = true;
+            
+            try {
+                if (typeof samplePages !== 'undefined' && typeof currentPage !== 'undefined') {
+                    window.words = samplePages[currentPage];
+                    
+                    window.allWords = [];
+                    if (typeof jsonFiles !== 'undefined') {
+                        jsonFiles.forEach(file => {
+                            window.allWords = [...window.allWords, ...samplePages[file]];
+                        });
+                    }
+                    
+                    if (typeof totalQuestions !== 'undefined') {
+                        window.totalQuestions = window.words.length;
+                    }
+                    if (typeof askedWords !== 'undefined') {
+                        window.askedWords = [];
+                    }
+                    if (typeof score !== 'undefined') {
+                        window.score = 0;
+                    }
+                    
+                    // Ekran geçişleri
+                    const startScreen = document.getElementById('start-screen');
+                    const quizScreen = document.getElementById('quiz-screen');
+                    
+                    if (startScreen && quizScreen) {
+                        startScreen.classList.remove('active');
+                        quizScreen.classList.add('active');
+                    }
+                    
+                    // İlk soruyu göster
+                    setTimeout(() => {
+                        if (typeof window.showNextQuestion === 'function') {
+                            window.showNextQuestion();
+                        }
+                    }, 100);
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Sayfa yüklenirken hata oluştu!');
+            } finally {
+                newStartBtn.innerHTML = '<i class="fas fa-play"></i> Quiz\'i Başlat';
+                newStartBtn.disabled = false;
+            }
+        });
     }
     
     // Ana başlatma fonksiyonu
-    function initialize() {
-        if (isInitialized) return;
-        
-        console.log('Dil değiştirme özelliği başlatılıyor...');
-        
-        // Stilleri ekle
-        addStyles();
-        
-        // Butonu ekle
-        if (addButtonToPage()) {
-            console.log('Dil değiştirme butonu eklendi');
-            isInitialized = true;
-        } else {
-            console.warn('Dil değiştirme butonu eklenemedi');
+    function init() {
+        // DOM yüklenene kadar bekle
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+            return;
         }
+        
+        // Birkaç saniye bekle ki orijinal script yüklensin
+        setTimeout(() => {
+            const startScreen = document.getElementById('start-screen');
+            const pageSelect = document.querySelector('.page-select');
+            
+            if (startScreen && pageSelect) {
+                // Dil değiştirici butonları ekle
+                const languageSwitcher = createLanguageSwitcher();
+                
+                // Page select'ten sonra, start butonundan önce ekle
+                const startButton = document.getElementById('start-btn');
+                if (startButton) {
+                    startButton.parentNode.insertBefore(languageSwitcher, startButton);
+                }
+                
+                // Event listener'ları kur
+                setupEventListeners();
+                
+                // Start butonunu yakala
+                setTimeout(() => {
+                    interceptStartButton();
+                }, 100);
+            }
+        }, 500);
     }
     
-    // DOM hazır olduğunda başlat
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', waitForPageReady);
-    } else {
-        waitForPageReady();
-    }
+    // Global değişkenleri ayarla
+    window.createModifiedOptions = createModifiedOptions;
     
-    // Sayfa tamamen yüklendiğinde de kontrol et
-    window.addEventListener('load', () => {
-        setTimeout(waitForPageReady, 100);
-    });
+    // Başlat
+    init();
     
-    // Debug için global erişim
-    window.LanguageSwitcher = {
-        toggle: toggleLanguageMode,
-        getCurrentMode: () => config.isGermanToTurkish ? 'DE→TR' : 'TR→DE',
-        isGermanToTurkish: () => config.isGermanToTurkish,
-        reinitialize: () => {
-            isInitialized = false;
-            initialize();
-        }
-    };
-    
-    console.log('Dil değiştirme modülü yüklendi');
 })();
     </script>
 </body>
