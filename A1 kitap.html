@@ -434,6 +434,449 @@
        // Örnek kelime verileri (gerçek uygulamada JSON dosyalarından yüklenir)
         const samplePages = {
 
+        json1: [
+  {
+    "german": "der Apfel",
+    "turkish": "Elma",
+    "type": "Nomen",
+    "example_sentence": "Ich esse einen Apfel jeden Morgen.",
+    "page_number": 1
+  },
+  {
+    "german": "das Brot",
+    "turkish": "Ekmek",
+    "type": "Nomen",
+    "example_sentence": "Das Brot ist frisch und lecker.",
+    "page_number": 1
+  },
+  {
+    "german": "der Gast",
+    "turkish": "Misafir",
+    "type": "Nomen",
+    "example_sentence": "Der Gast kommt heute Abend.",
+    "page_number": 1
+  },
+  {
+    "german": "der Kuchen",
+    "turkish": "Kek",
+    "type": "Nomen",
+    "example_sentence": "Meine Mutter backt einen Kuchen.",
+    "page_number": 1
+  },
+  {
+    "german": "die Milch",
+    "turkish": "Süt",
+    "type": "Nomen",
+    "example_sentence": "Ich trinke Milch zum Frühstück.",
+    "page_number": 1
+  },
+  {
+    "german": "der Saft",
+    "turkish": "Meyve suyu",
+    "type": "Nomen",
+    "example_sentence": "Orangensaft ist mein Lieblingsgetränk.",
+    "page_number": 1
+  },
+  {
+    "german": "die Schinken",
+    "turkish": "Jambon",
+    "type": "Nomen",
+    "example_sentence": "Ich mag Schinken auf meinem Brot.",
+    "page_number": 1
+  },
+  {
+    "german": "der Durst",
+    "turkish": "Susuzluk",
+    "type": "Nomen",
+    "example_sentence": "Ich habe Durst und trinke Wasser.",
+    "page_number": 1
+  },
+  {
+    "german": "die Flasche",
+    "turkish": "Şişe",
+    "type": "Nomen",
+    "example_sentence": "Die Flasche Wasser ist kalt.",
+    "page_number": 1
+  },
+  {
+    "german": "das Getränk",
+    "turkish": "İçecek",
+    "type": "Nomen",
+    "example_sentence": "Was möchtest du als Getränk?",
+    "page_number": 1
+  },
+  {
+    "german": "die Lebensmittel",
+    "turkish": "Yiyecek",
+    "type": "Nomen",
+    "example_sentence": "Wir kaufen Lebensmittel im Supermarkt.",
+    "page_number": 1
+  },
+  {
+    "german": "das Obst",
+    "turkish": "Meyve",
+    "type": "Nomen",
+    "example_sentence": "Obst ist gesund und lecker.",
+    "page_number": 1
+  },
+  {
+    "german": "die Rechnung",
+    "turkish": "Fatura",
+    "type": "Nomen",
+    "example_sentence": "Kann ich bitte die Rechnung haben?",
+    "page_number": 1
+  },
+  {
+    "german": "die Sahne",
+    "turkish": "Krema",
+    "type": "Nomen",
+    "example_sentence": "Die Sahne schmeckt süß.",
+    "page_number": 1
+  },
+  {
+    "german": "die Speisekarte",
+    "turkish": "Menü",
+    "type": "Nomen",
+    "example_sentence": "Kann ich die Speisekarte sehen?",
+    "page_number": 1
+  },
+  {
+    "german": "der Wein",
+    "turkish": "Şarap",
+    "type": "Nomen",
+    "example_sentence": "Ein Glas Wein, bitte.",
+    "page_number": 1
+  }
+],
+json2: [
+  {
+    "german": "das Doppelzimmer",
+    "turkish": "Çift kişilik oda",
+    "type": "Nomen",
+    "example_sentence": "Wir buchen ein Doppelzimmer im Hotel.",
+    "page_number": 2
+  },
+  {
+    "german": "die Ecke",
+    "turkish": "Köşe",
+    "type": "Nomen",
+    "example_sentence": "Das Café ist an der Ecke.",
+    "page_number": 2
+  },
+  {
+    "german": "die Heimat",
+    "turkish": "Vatan",
+    "type": "Nomen",
+    "example_sentence": "Ich vermisse meine Heimat.",
+    "page_number": 2
+  },
+  {
+    "german": "der Kühlschrank",
+    "turkish": "Buzdolabı",
+    "type": "Nomen",
+    "example_sentence": "Die Milch ist im Kühlschrank.",
+    "page_number": 2
+  },
+  {
+    "german": "die Möbel",
+    "turkish": "Mobilya",
+    "type": "Nomen",
+    "example_sentence": "Wir kaufen neue Möbel.",
+    "page_number": 2
+  },
+  {
+    "german": "der Schrank",
+    "turkish": "Dolap",
+    "type": "Nomen",
+    "example_sentence": "Die Kleider sind im Schrank.",
+    "page_number": 2
+  },
+  {
+    "german": "der Stock",
+    "turkish": "Kat",
+    "type": "Nomen",
+    "example_sentence": "Wir wohnen im dritten Stock.",
+    "page_number": 2
+  },
+  {
+    "german": "die Treppe",
+    "turkish": "Merdiven",
+    "type": "Nomen",
+    "example_sentence": "Die Treppe ist steil.",
+    "page_number": 2
+  },
+  {
+    "german": "die Anzeige",
+    "turkish": "Reklam",
+    "type": "Nomen",
+    "example_sentence": "Ich lese die Anzeige in der Zeitung.",
+    "page_number": 2
+  },
+  {
+    "german": "das Gift",
+    "turkish": "Zehir",
+    "type": "Nomen",
+    "example_sentence": "Gift ist gefährlich.",
+    "page_number": 2
+  },
+  {
+    "german": "das Einzelzimmer",
+    "turkish": "Tek kişilik oda",
+    "type": "Nomen",
+    "example_sentence": "Ich buche ein Einzelzimmer.",
+    "page_number": 2
+  },
+  {
+    "german": "das Feuer",
+    "turkish": "Ateş",
+    "type": "Nomen",
+    "example_sentence": "Das Feuer wärmt uns.",
+    "page_number": 2
+  },
+  {
+    "german": "der Herd",
+    "turkish": "Ocak",
+    "type": "Nomen",
+    "example_sentence": "Der Herd ist heiß.",
+    "page_number": 2
+  },
+  {
+    "german": "das Licht",
+    "turkish": "Işık",
+    "type": "Nomen",
+    "example_sentence": "Das Licht ist an.",
+    "page_number": 2
+  },
+  {
+    "german": "der Ort",
+    "turkish": "Yer",
+    "type": "Nomen",
+    "example_sentence": "Dieser Ort ist schön.",
+    "page_number": 2
+  },
+  {
+    "german": "der See",
+    "turkish": "Göl",
+    "type": "Nomen",
+    "example_sentence": "Wir gehen an den See.",
+    "page_number": 2
+  }
+],
+json3: [
+  {
+    "german": "die Straße",
+    "turkish": "Sokak",
+    "type": "Nomen",
+    "example_sentence": "Die Straße ist sehr lang.",
+    "page_number": 3
+  },
+  {
+    "german": "die Miete",
+    "turkish": "Kira",
+    "type": "Nomen",
+    "example_sentence": "Die Miete ist hoch.",
+    "page_number": 3
+  },
+  {
+    "german": "die Uhr",
+    "turkish": "Saat",
+    "type": "Nomen",
+    "example_sentence": "Wie spät ist die Uhr?",
+    "page_number": 3
+  },
+  {
+    "german": "der Schlüssel",
+    "turkish": "Anahtar",
+    "type": "Nomen",
+    "example_sentence": "Ich habe meinen Schlüssel verloren.",
+    "page_number": 3
+  },
+  {
+    "german": "das Bild",
+    "turkish": "Resim",
+    "type": "Nomen",
+    "example_sentence": "Das Bild hängt an der Wand.",
+    "page_number": 3
+  },
+  {
+    "german": "die Stadt",
+    "turkish": "Şehir",
+    "type": "Nomen",
+    "example_sentence": "Die Stadt ist laut.",
+    "page_number": 3
+  },
+  {
+    "german": "das Dorf",
+    "turkish": "Köy",
+    "type": "Nomen",
+    "example_sentence": "Das Dorf ist ruhig.",
+    "page_number": 3
+  },
+  {
+    "german": "die Toilette",
+    "turkish": "Tuvalet",
+    "type": "Nomen",
+    "example_sentence": "Wo ist die Toilette?",
+    "page_number": 3
+  },
+  {
+    "german": "der Vorort",
+    "turkish": "Banliyö",
+    "type": "Nomen",
+    "example_sentence": "Wir wohnen im Vorort.",
+    "page_number": 3
+  },
+  {
+    "german": "das Zimmer",
+    "turkish": "Oda",
+    "type": "Nomen",
+    "example_sentence": "Das Zimmer ist groß.",
+    "page_number": 3
+  },
+  {
+    "german": "der Hund",
+    "turkish": "Köpek",
+    "type": "Nomen",
+    "example_sentence": "Der Hund bellt laut.",
+    "page_number": 3
+  },
+  {
+    "german": "die Abfahrt",
+    "turkish": "Kalkış",
+    "type": "Nomen",
+    "example_sentence": "Die Abfahrt des Zuges ist um 10 Uhr.",
+    "page_number": 3
+  },
+  {
+    "german": "das Meer",
+    "turkish": "Deniz",
+    "type": "Nomen",
+    "example_sentence": "Das Meer ist blau.",
+    "page_number": 3
+  },
+  {
+    "german": "die Auskunft",
+    "turkish": "Bilgi",
+    "type": "Nomen",
+    "example_sentence": "Ich hole mir eine Auskunft.",
+    "page_number": 3
+  },
+  {
+    "german": "der Raum",
+    "turkish": "Oda",
+    "type": "Nomen",
+    "example_sentence": "Der Raum ist hell.",
+    "page_number": 3
+  },
+  {
+    "german": "die Autobahn",
+    "turkish": "Otoyol",
+    "type": "Nomen",
+    "example_sentence": "Die Autobahn ist schnell.",
+    "page_number": 3
+  }
+],
+json4: [
+  {
+    "german": "der Reiseführer",
+    "turkish": "Seyahat rehberi",
+    "type": "Nomen",
+    "example_sentence": "Der Reiseführer zeigt uns die Sehenswürdigkeiten.",
+    "page_number": 4
+  },
+  {
+    "german": "das Schwimmbad",
+    "turkish": "Havuz",
+    "type": "Nomen",
+    "example_sentence": "Wir gehen ins Schwimmbad.",
+    "page_number": 4
+  },
+  {
+    "german": "das Schiff",
+    "turkish": "Gemi",
+    "type": "Nomen",
+    "example_sentence": "Das Schiff fährt nach Italien.",
+    "page_number": 4
+  },
+  {
+    "german": "der Anschluss",
+    "turkish": "Bağlantı",
+    "type": "Nomen",
+    "example_sentence": "Der Zug hat einen guten Anschluss.",
+    "page_number": 4
+  },
+  {
+    "german": "die Bahn",
+    "turkish": "Tren",
+    "type": "Nomen",
+    "example_sentence": "Die Bahn kommt pünktlich.",
+    "page_number": 4
+  },
+  {
+    "german": "die Fahrkarte",
+    "turkish": "Bilet",
+    "type": "Nomen",
+    "example_sentence": "Ich kaufe eine Fahrkarte.",
+    "page_number": 4
+  },
+  {
+    "german": "die Tasche",
+    "turkish": "Çanta",
+    "type": "Nomen",
+    "example_sentence": "Meine Tasche ist schwer.",
+    "page_number": 4
+  },
+  {
+    "german": "die Übersetzung",
+    "turkish": "Çeviri",
+    "type": "Nomen",
+    "example_sentence": "Die Übersetzung ist korrekt.",
+    "page_number": 4
+  },
+  {
+    "german": "der Ausflug",
+    "turkish": "Gezi",
+    "type": "Nomen",
+    "example_sentence": "Wir machen einen Ausflug.",
+    "page_number": 4
+  },
+  {
+    "german": "der Ausweis",
+    "turkish": "Kimlik",
+    "type": "Nomen",
+    "example_sentence": "Zeigen Sie bitte Ihren Ausweis.",
+    "page_number": 4
+  },
+  {
+    "german": "der Flughafen",
+    "turkish": "Havalimanı",
+    "type": "Nomen",
+    "example_sentence": "Der Flughafen ist weit.",
+    "page_number": 4
+  },
+  {
+    "german": "das Flugzeug",
+    "turkish": "Uçak",
+    "type": "Nomen",
+    "example_sentence": "Das Flugzeug startet um 15 Uhr.",
+    "page_number": 4
+  },
+  {
+    "german": "die Reise",
+    "turkish": "Seyahat",
+    "type": "Nomen",
+    "example_sentence": "Die Reise war schön.",
+    "page_number": 4
+  },
+  {
+    "german": "die Sehenswürdigkeit",
+    "turkish": "Turistik yer",
+    "type": "Nomen",
+    "example_sentence": "Wir besuchen die Sehenswürdigkeiten.",
+    "page_number": 4
+  }
+]
+
 
 };
         
